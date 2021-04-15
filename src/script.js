@@ -24,26 +24,6 @@ scene.fog =fog
 /**
  * Models 
  */
- const gltfLoader = new GLTFLoader()
- gltfLoader.load(
-  '/models/Duck/glTF/Duck.gltf',
-  (gltf) =>
-  {
-      console.log('success')
-      console.log(gltf)
-  },
-  (progress) =>
-  {
-      console.log('progress')
-      console.log(progress)
-  },
-  (error) =>
-  {
-      console.log('error')
-      console.log(error)
-  }
-)
-
  const modelLoader = new OBJLoader();
  let i = 0
  while (i < 10) {
