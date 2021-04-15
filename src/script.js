@@ -2,6 +2,8 @@ import './style.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'dat.gui'
+import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 
 /**
  * Base
@@ -16,8 +18,50 @@ const canvas = document.querySelector('canvas.webgl')
 const scene = new THREE.Scene()
 
 // Fog
-const fog = new THREE.Fog('#262837', 1, 15)
+const fog = new THREE.Fog('#262837', 1, 14)
 scene.fog =fog
+
+/**
+ * Models 
+ */
+ const gltfLoader = new GLTFLoader()
+ gltfLoader.load(
+  '/models/Duck/glTF/Duck.gltf',
+  (gltf) =>
+  {
+      console.log('success')
+      console.log(gltf)
+  },
+  (progress) =>
+  {
+      console.log('progress')
+      console.log(progress)
+  },
+  (error) =>
+  {
+      console.log('error')
+      console.log(error)
+  }
+)
+
+ const modelLoader = new OBJLoader();
+ let i = 0
+ while (i < 10) {
+ modelLoader.load(
+   '/models/hand/zombie_hand.obj',
+  (zombieHand) => {
+    const angle = Math.random() * Math.PI * 2
+    const radius = 3 + Math.random() * 6
+    const x = Math.sin(angle) * radius
+    const z = Math.cos(angle) * radius
+
+    zombieHand.position.set(x, 0, z)
+    zombieHand.scale.set(0.02, 0.02, 0.02)
+    zombieHand.rotation.x = - Math.PI * 0.5;
+    scene.add(zombieHand)
+  },
+  i++
+   )}
 /**
  * Textures
  */
