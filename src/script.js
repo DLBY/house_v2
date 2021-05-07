@@ -42,6 +42,22 @@ scene.fog =fog
   },
   i++
    )}
+
+const windowLoader = new OBJLoader();
+windowLoader.load(
+  'models/window/window.obj',
+  (window) => {
+    new THREE.MeshStandardMaterial({ 
+      map: windowTexture,
+      normalMap: windowNormalTexture,
+    })
+    window.scale.set(0.02, 0.012, 0.02)
+    window.rotation.y = Math.PI * 1.5
+    window.position.set(- 1.3, 1.3 , 2.1)
+    scene.add(window)
+  }
+)
+
 /**
  * Textures
  */
@@ -63,6 +79,22 @@ const grassColorTexture = textureLoader.load('/textures/grass/color.jpg')
 const grassAmbientOcclusionTexture = textureLoader.load('/textures/grass/ambientOcclusion.jpg')
 const grassNormalTexture = textureLoader.load('/textures/grass/normal.jpg')
 const grassRoughnessTexture = textureLoader.load('/textures/grass/roughness.jpg')
+
+const windowTexture = textureLoader.load('/textures/window/window.png')
+const windowNormalTexture = textureLoader.load('/textures/window/window_normal.png')
+const glassColorTexture = textureLoader.load('/textures/glass/glass_color.jpg')
+// const glassAlphaTexture = textureLoader.load('/textures/glass/alpha.jpg')
+const glassAmbientOcclusionTexture = textureLoader.load('/textures/glass/glass_ao.jpg')
+const glassHeightTexture = textureLoader.load('/textures/glass/glass_height.png')
+const glassNormalTexture = textureLoader.load('/textures/glass/glass_normal.jpg')
+const glassMetalnessTexture = textureLoader.load('/textures/glass/glass_metallic.jpg')
+const glassRoughnessTexture = textureLoader.load('/textures/glass/glass_roughness.jpg')
+
+const rocksColorTexture = textureLoader.load('/textures/rocks/rock_color.jpg')
+const rocksAmbientOcclusionTexture = textureLoader.load('/textures/rocks/rock_ao.jpg')
+const rocksHeightTexture = textureLoader.load('/textures/rocks/rock_height.png')
+const rocksNormalTexture = textureLoader.load('/textures/rocks/rock_normal.jpg')
+const rocksRoughnessTexture = textureLoader.load('/textures/rocks/rock_roughness.jpg')
 
 grassColorTexture.repeat.set(8, 8)
 grassAmbientOcclusionTexture.repeat.set(8, 8)
@@ -94,19 +126,53 @@ const walls = new THREE.Mesh(
     normalMap: bricksNormalTexture,
     roughnessMap: bricksRoughnessTexture
   })
-)
-walls.geometry.setAttribute('uv2', new THREE.Float32BufferAttribute(walls.geometry.attributes.uv.array, 2))
-walls.position.y = 2.5 / 2
-house.add(walls)
+  )
+  walls.geometry.setAttribute('uv2', new THREE.Float32BufferAttribute(walls.geometry.attributes.uv.array, 2))
+  walls.position.y = 2.5 / 2
+  house.add(walls)
+  
+  //roof
+  const roof = new THREE.Mesh(
+    new THREE.ConeBufferGeometry(3.5, 1, 4),
+    new THREE.MeshStandardMaterial({ color: '#b35f45'})
+    )
+    roof.position.y = 2.5 + 1 / 2
+    roof.rotation.y = Math.PI * 0.25
+    house.add(roof)
+    
+  // fireplace
+  const firePlace = new THREE.Mesh(
+    new THREE.BoxGeometry(0.5, 0.5, 1),
+    new THREE.MeshStandardMaterial({
+      map: bricksColorTexture,
+      aoMap: bricksAmbientOcclusionTexture,
+      normalMap: bricksNormalTexture,
+      roughnessMap: bricksRoughnessTexture
+    })
+  )
+  firePlace.rotation.x = Math.PI * 0.5
+  firePlace.position.y = ((2.5 / 2) + (2.5 + 1 / 2)) * 0.73
+  firePlace.position.x = 1
+  house.add(firePlace)
 
-//roof
-const roof = new THREE.Mesh(
-  new THREE.ConeBufferGeometry(3.5, 1, 4),
-  new THREE.MeshStandardMaterial({ color: '#b35f45'})
+//window background
+const windowBg = new THREE.Mesh(
+  new THREE.PlaneBufferGeometry(0.8, 0.88, 100, 100),
+  new THREE.MeshStandardMaterial({
+    map:glassColorTexture,
+    transparent: true,
+    aoMap:glassAmbientOcclusionTexture,
+    displacementMap:glassHeightTexture,
+    displacementScale: 0.1,
+    normalMap:glassNormalTexture,
+    metalnessMap:glassMetalnessTexture,
+    roughnessMap:glassRoughnessTexture,
+  })
 )
-roof.position.y = 2.5 + 1 / 2
-roof.rotation.y = Math.PI * 0.25
-house.add(roof)
+windowBg.position.y = 1.3
+windowBg.position.x = -1.3
+windowBg.position.z = 2.01
+house.add(windowBg)
 
 //door 
 const door = new THREE.Mesh(
@@ -156,7 +222,14 @@ const graves = new THREE.Group()
 scene.add(graves)
 
 const graveGeometry = new THREE.BoxBufferGeometry( 0.6, 0.8, 0.2)
-const graveMaterial = new THREE.MeshStandardMaterial({ color: '#b2b6b1'})
+const graveMaterial = new THREE.MeshStandardMaterial({ color: '#b2b6b1',
+map: rocksColorTexture,
+transparent: true,
+displacementMap: rocksHeightTexture,
+displacementScale: 0,
+aoMap:rocksAmbientOcclusionTexture,
+normalMap: rocksNormalTexture,
+roughnessMap: rocksRoughnessTexture, })
 
 for (let i = 0; i < 50; i++) {
   const angle = Math.random() * Math.PI * 2
